@@ -64,6 +64,17 @@
                     </div>
                 </div>
 
+                <!-- Time Range Filter -->
+                <div class="sidebar-widget time-widget">
+                    <h3>Time Range</h3>
+                    <div class="time-pills-container">
+                        <button class="time-pill active" data-range="all">All Time</button>
+                        <button class="time-pill" data-range="7days">Last 7 Days</button>
+                        <button class="time-pill" data-range="30days">Last 30 Days</button>
+                        <button class="time-pill" data-range="month">This Month</button>
+                    </div>
+                </div>
+
                 <!-- Statistics Panel -->
                 <div class="sidebar-widget stats-widget">
                     <h3>Stats Dashboard</h3>
@@ -201,6 +212,15 @@
                             <span id="composer-ref-date" class="ref-date">June 17, 2026</span>
                         </div>
                         <p id="composer-ref-preview" class="ref-text-preview">Select an update to get started.</p>
+                    </div>
+
+                    <!-- Tweet Style Selector -->
+                    <div class="composer-style-widget" style="margin-bottom: 1.25rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Tweet Style</label>
+                        <div style="display: flex; gap: 0.5rem; background: var(--bg-input); padding: 0.25rem; border-radius: 10px; border: 1px solid var(--border-color);">
+                            <button type="button" class="style-toggle-btn active" id="btn-style-detailed" style="flex: 1; padding: 0.45rem; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: var(--transition-quick); background: var(--bg-card); color: var(--text-main);">Detailed</button>
+                            <button type="button" class="style-toggle-btn" id="btn-style-minimal" style="flex: 1; padding: 0.45rem; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: var(--transition-quick); background: transparent; color: var(--text-secondary);">Minimal</button>
+                        </div>
                     </div>
 
                     <!-- Editor -->

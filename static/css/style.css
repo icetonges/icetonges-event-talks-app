@@ -1404,3 +1404,50 @@ body.light-theme .skeleton-date {
 body.light-theme .skeleton-line {
     background: rgba(0, 0, 0, 0.03);
 }
+
+/* Time Range Filter Pills */
+.time-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.time-pill {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition-quick);
+    flex: 1 1 calc(50% - 0.25rem);
+    text-align: center;
+}
+
+.time-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.time-pill.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+body.light-theme .time-pill {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .time-pill:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .time-pill.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}

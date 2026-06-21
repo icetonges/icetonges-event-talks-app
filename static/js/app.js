@@ -5,9 +5,11 @@ let state = {
     filters: {
         search: "",
         types: new Set(),
-        sort: "newest"
+        sort: "newest",
+        timeRange: "all" // "all", "7days", "30days", "month"
     },
-    selectedItemId: null,
+    selectedItemIds: new Set(), // Set of selected item IDs
+    tweetStyle: "detailed",     // "detailed", "minimal"
     activeHashtags: new Set(),
     lastFetchedTime: null
 };
@@ -35,9 +37,6 @@ function initApp() {
     document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
     document.getElementById("btn-theme-toggle").addEventListener("click", toggleTheme);
     
-    // Apply saved theme
-    applySavedTheme();
-    
     // Tweet textarea listener
     const textarea = document.getElementById("tweet-textarea");
     textarea.addEventListener("input", handleTweetTextareaInput);
@@ -47,6 +46,49 @@ function initApp() {
     tags.forEach(pill => {
         pill.addEventListener("click", () => toggleHashtag(pill));
     });
+
+    // Time range pills
+    const timePills = document.querySelectorAll(".time-pill");
+    timePills.forEach(pill => {
+        pill.addEventListener("click", () => {
+            timePills.forEach(p => p.classList.remove("active"));
+            pill.classList.add("active");
+            state.filters.timeRange = pill.getAttribute("data-range");
+            renderFeed();
+        });
+    });
+
+    // Tweet style switcher buttons
+    const btnStyleDetailed = document.getElementById("btn-style-detailed");
+    const btnStyleMinimal = document.getElementById("btn-style-minimal");
+    
+    if (btnStyleDetailed && btnStyleMinimal) {
+        btnStyleDetailed.addEventListener("click", () => {
+            btnStyleDetailed.classList.add("active");
+            btnStyleDetailed.style.background = "var(--bg-card)";
+            btnStyleDetailed.style.color = "var(--text-main)";
+            
+            btnStyleMinimal.classList.remove("active");
+            btnStyleMinimal.style.background = "transparent";
+            btnStyleMinimal.style.color = "var(--text-secondary)";
+            
+            state.tweetStyle = "detailed";
+            updateComposerState();
+        });
+        
+        btnStyleMinimal.addEventListener("click", () => {
+            btnStyleMinimal.classList.add("active");
+            btnStyleMinimal.style.background = "var(--bg-card)";
+            btnStyleMinimal.style.color = "var(--text-main)";
+            
+            btnStyleDetailed.classList.remove("active");
+            btnStyleDetailed.style.background = "transparent";
+            btnStyleDetailed.style.color = "var(--text-secondary)";
+            
+            state.tweetStyle = "minimal";
+            updateComposerState();
+        });
+    }
 
     // Stats cards quick filter
     const statsCards = document.querySelectorAll(".stat-card");
@@ -63,7 +105,6 @@ function initApp() {
                 state.filters.types.add("Announcement");
             } else if (type === "other") {
                 state.filters.types.clear();
-                // Add all except feature and announcement
                 state.releases.forEach(item => {
                     if (item.type !== "Feature" && item.type !== "Announcement") {
                         state.filters.types.add(item.type);
@@ -74,6 +115,9 @@ function initApp() {
             renderFeed();
         });
     });
+
+    // Apply saved theme
+    applySavedTheme();
 
     // Fetch initial release notes
     fetchReleases();
@@ -172,13 +216,11 @@ function buildFilterPills() {
     const pillContainer = document.getElementById("filter-pills");
     pillContainer.innerHTML = "";
     
-    // Get unique types and their counts
     const counts = {};
     state.releases.forEach(item => {
         counts[item.type] = (counts[item.type] || 0) + 1;
     });
 
-    // Create pills sorted by frequency
     const uniqueTypes = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
     
     uniqueTypes.forEach(type => {
@@ -186,7 +228,6 @@ function buildFilterPills() {
         pill.className = "filter-pill";
         pill.setAttribute("data-type", type);
         
-        // Add active class if it is selected in filters
         if (state.filters.types.has(type)) {
             pill.classList.add("active");
         }
@@ -230,16 +271,34 @@ function renderFeed() {
     
     // Apply filters
     state.filteredReleases = state.releases.filter(item => {
-        // 1. Search Query Filter (Checks type, date, and text content)
+        // 1. Search Query Filter
         const matchesQuery = !query || 
             item.type.toLowerCase().includes(query) || 
             item.date.toLowerCase().includes(query) || 
             item.text.toLowerCase().includes(query);
             
-        // 2. Type Filter (If anything is selected)
+        // 2. Type Filter
         const matchesType = state.filters.types.size === 0 || state.filters.types.has(item.type);
         
-        return matchesQuery && matchesType;
+        // 3. Time Range Filter
+        let matchesTime = true;
+        if (state.filters.timeRange !== 'all') {
+            const itemDate = new Date(item.updated || item.date);
+            const now = new Date();
+            now.setHours(23, 59, 59, 999); // Reset to end of day to include today's releases
+            const diffMs = now - itemDate;
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            
+            if (state.filters.timeRange === '7days') {
+                matchesTime = diffDays >= 0 && diffDays <= 7;
+            } else if (state.filters.timeRange === '30days') {
+                matchesTime = diffDays >= 0 && diffDays <= 30;
+            } else if (state.filters.timeRange === 'month') {
+                matchesTime = itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
+            }
+        }
+        
+        return matchesQuery && matchesType && matchesTime;
     });
 
     // Apply Sorting
@@ -276,11 +335,10 @@ function renderFeed() {
         card.className = "release-card";
         card.setAttribute("data-id", item.id);
         
-        if (state.selectedItemId === item.id) {
+        if (state.selectedItemIds.has(item.id)) {
             card.classList.add("selected");
         }
         
-        // Define badge class name
         const typeLower = item.type.toLowerCase();
         let badgeClass = "badge-update";
         if (["feature", "announcement", "breaking", "changed", "deprecated", "fix", "issue"].includes(typeLower)) {
@@ -316,11 +374,9 @@ function renderFeed() {
 
         // Card clicks
         card.addEventListener("click", (e) => {
-            // Check if user clicked a link or button
             if (e.target.tagName.toLowerCase() === 'a' || e.target.closest('a') || e.target.closest('button')) {
                 return; // Let links and buttons handle their own clicks
             }
-            
             handleSelectCard(item);
         });
 
@@ -331,7 +387,6 @@ function renderFeed() {
             try {
                 await navigator.clipboard.writeText(item.text);
                 
-                // Show temporary success feedback
                 const btnText = copyBtn.querySelector("span");
                 const btnIcon = copyBtn.querySelector("i");
                 const oldText = btnText.innerText;
@@ -358,9 +413,27 @@ function renderFeed() {
         // Tweet button click
         const tweetBtn = card.querySelector(".btn-card-tweet");
         tweetBtn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Prevent duplicate trigger
-            handleSelectCard(item);
-            // Scroll to composer on mobile
+            e.stopPropagation();
+            
+            // If it wasn't selected, select it (and unselect others if they want a clean composition of just this one)
+            if (!state.selectedItemIds.has(item.id)) {
+                state.selectedItemIds.clear();
+                state.selectedItemIds.add(item.id);
+                
+                // Update all cards visual selection state
+                const cards = document.querySelectorAll(".release-card");
+                cards.forEach(c => {
+                    const id = c.getAttribute("data-id");
+                    if (state.selectedItemIds.has(id)) {
+                        c.classList.add("selected");
+                    } else {
+                        c.classList.remove("selected");
+                    }
+                });
+            }
+            
+            updateComposerState();
+            
             if (window.innerWidth <= 1100) {
                 document.getElementById("composer-panel").scrollIntoView({ behavior: 'smooth' });
             }
@@ -399,6 +472,18 @@ function clearSearch() {
 function resetAllFilters() {
     clearSearch();
     state.filters.types.clear();
+    state.filters.timeRange = "all";
+    
+    // Reset time UI active state
+    const timePills = document.querySelectorAll(".time-pill");
+    timePills.forEach(p => {
+        if (p.getAttribute("data-range") === "all") {
+            p.classList.add("active");
+        } else {
+            p.classList.remove("active");
+        }
+    });
+    
     updateFilterPillsUI();
     renderFeed();
 }
@@ -411,77 +496,160 @@ function handleSortChange(e) {
 
 // Selection of card logic
 function handleSelectCard(item) {
-    const cards = document.querySelectorAll(".release-card");
-    
-    if (state.selectedItemId === item.id) {
-        // Toggle selection off if already selected
-        state.selectedItemId = null;
-        cards.forEach(c => c.classList.remove("selected"));
-        closeComposer();
+    if (state.selectedItemIds.has(item.id)) {
+        state.selectedItemIds.delete(item.id);
     } else {
-        state.selectedItemId = item.id;
-        cards.forEach(c => {
-            if (c.getAttribute("data-id") === item.id) {
-                c.classList.add("selected");
-            } else {
-                c.classList.remove("selected");
-            }
-        });
-        openComposer(item);
+        state.selectedItemIds.add(item.id);
     }
+    
+    // Update visual classes on cards
+    const cards = document.querySelectorAll(".release-card");
+    cards.forEach(c => {
+        const id = c.getAttribute("data-id");
+        if (state.selectedItemIds.has(id)) {
+            c.classList.add("selected");
+        } else {
+            c.classList.remove("selected");
+        }
+    });
+    
+    updateComposerState();
 }
 
-// Twitter Composer Open Logic
-function openComposer(item) {
+// Update Composer panel state based on current selections
+function updateComposerState() {
     const emptyState = document.getElementById("composer-empty-state");
     const activeState = document.getElementById("composer-active-state");
+    
+    if (state.selectedItemIds.size === 0) {
+        emptyState.style.display = "flex";
+        activeState.style.display = "none";
+        return;
+    }
     
     emptyState.style.display = "none";
     activeState.style.display = "block";
     
-    // Set reference card data
-    document.getElementById("composer-ref-date").innerText = item.date;
+    // Retrieve actual objects of selected releases
+    const selectedItems = state.releases.filter(item => state.selectedItemIds.has(item.id));
+    
+    // Sort selected items by date (newest first)
+    selectedItems.sort((a, b) => new Date(b.updated || b.date) - new Date(a.updated || a.date));
     
     const badge = document.getElementById("composer-ref-badge");
-    badge.innerText = item.type;
-    badge.className = "type-badge";
-    const typeLower = item.type.toLowerCase();
-    let badgeClass = "badge-update";
-    if (["feature", "announcement", "breaking", "changed", "deprecated", "fix", "issue"].includes(typeLower)) {
-        badgeClass = `badge-${typeLower}`;
+    const dateLabel = document.getElementById("composer-ref-date");
+    const textPreview = document.getElementById("composer-ref-preview");
+    
+    if (selectedItems.length === 1) {
+        const item = selectedItems[0];
+        dateLabel.innerText = item.date;
+        badge.innerText = item.type;
+        badge.className = "type-badge";
+        
+        const typeLower = item.type.toLowerCase();
+        let badgeClass = "badge-update";
+        if (["feature", "announcement", "breaking", "changed", "deprecated", "fix", "issue"].includes(typeLower)) {
+            badgeClass = `badge-${typeLower}`;
+        }
+        badge.classList.add(badgeClass);
+        textPreview.innerText = item.text;
+    } else {
+        // Multi-select view in reference card
+        dateLabel.innerText = `${selectedItems.length} items selected`;
+        badge.innerText = "Multi-Select";
+        badge.className = "type-badge badge-update";
+        
+        textPreview.innerText = selectedItems.map((item, index) => {
+            return `${index + 1}. [${item.type}] ${item.text.substring(0, 50)}...`;
+        }).join("\n");
     }
-    badge.classList.add(badgeClass);
     
-    document.getElementById("composer-ref-preview").innerText = item.text;
+    // Generate tweet text dynamically and write it into the editor textarea
+    const textarea = document.getElementById("tweet-textarea");
+    textarea.value = generateTweetText(selectedItems);
     
-    // Generate initial tweet text (ensuring it is safe and under 280 chars)
-    // Formula: [BigQuery Type] Date: Text. Details: URL
-    const prefix = `[BigQuery ${item.type}] ${item.date}: `;
-    const suffix = `\n\nRead more details: https://cloud.google.com/bigquery/docs/release-notes`;
+    // Update count labels and mockup visual
+    updateComposerStats();
+}
+
+// Generate the text for the tweet based on selection size and template style
+function generateTweetText(selectedItems) {
+    const baseUrl = "https://cloud.google.com/bigquery/docs/release-notes";
     const hashtagsStr = state.activeHashtags.size > 0 ? "\n" + Array.from(state.activeHashtags).join(" ") : "";
     
-    // Let's compute allowed description length
-    // Twitter limit = 280
-    const currentOverhead = prefix.length + suffix.length + hashtagsStr.length;
-    const allowedTextLength = 280 - currentOverhead;
-    
-    let descriptionText = item.text.replace(/\s+/g, ' '); // normalize spaces
-    if (descriptionText.length > allowedTextLength) {
-        descriptionText = descriptionText.slice(0, allowedTextLength - 3) + "...";
+    if (selectedItems.length === 1) {
+        const item = selectedItems[0];
+        if (state.tweetStyle === "detailed") {
+            const prefix = `[BigQuery ${item.type}] ${item.date}: `;
+            const suffix = `\n\nRead details: ${baseUrl}${hashtagsStr}`;
+            const allowedLength = 280 - prefix.length - suffix.length;
+            
+            let desc = item.text.replace(/\s+/g, ' ');
+            if (desc.length > allowedLength) {
+                desc = desc.slice(0, allowedLength - 3) + "...";
+            }
+            return `${prefix}${desc}${suffix}`;
+        } else {
+            // Minimal
+            const prefix = `New BigQuery ${item.type} (${item.date}): `;
+            const suffix = `\n\nDetails: ${baseUrl}${hashtagsStr}`;
+            const allowedLength = 280 - prefix.length - suffix.length;
+            
+            // Grab first sentence or truncate short
+            let firstSentence = item.text.split(/[.!?]/)[0].trim();
+            if (firstSentence.length > allowedLength || firstSentence.length < 15) {
+                firstSentence = item.text.replace(/\s+/g, ' ');
+                if (firstSentence.length > allowedLength) {
+                    firstSentence = firstSentence.slice(0, allowedLength - 3) + "...";
+                }
+            }
+            return `${prefix}${firstSentence}${suffix}`;
+        }
+    } else {
+        // Multi-select composition
+        if (state.tweetStyle === "detailed") {
+            const header = `[BigQuery Updates] ${selectedItems.length} new updates:\n`;
+            const suffix = `\n\nRead all: ${baseUrl}${hashtagsStr}`;
+            
+            const budget = 280 - header.length - suffix.length;
+            const budgetPerItem = Math.floor(budget / selectedItems.length) - 8; // budget accounting for formatting
+            
+            const itemTexts = selectedItems.map(item => {
+                // Shorten date: "June 17, 2026" -> "Jun 17"
+                const dateParts = item.date.split(' ');
+                const shortDate = dateParts.length >= 2 ? `${dateParts[0].slice(0, 3)} ${dateParts[1].replace(',', '')}` : item.date;
+                const itemPrefix = `• ${shortDate} (${item.type}): `;
+                const maxDescLen = budgetPerItem - itemPrefix.length;
+                
+                let desc = item.text.replace(/\s+/g, ' ');
+                if (desc.length > maxDescLen) {
+                    desc = desc.slice(0, maxDescLen - 3) + "...";
+                }
+                return `${itemPrefix}${desc}`;
+            });
+            
+            return `${header}${itemTexts.join('\n')}${suffix}`;
+        } else {
+            // Minimal Multi-select
+            const typesCount = {};
+            selectedItems.forEach(item => {
+                typesCount[item.type] = (typesCount[item.type] || 0) + 1;
+            });
+            const typesSummary = Object.keys(typesCount).map(t => `${typesCount[t]} ${t}(s)`).join(', ');
+            
+            const tweet = `Check out the latest BigQuery releases! ${selectedItems.length} new updates have been posted, including: ${typesSummary}.\n\nDetails: ${baseUrl}${hashtagsStr}`;
+            
+            if (tweet.length > 280) {
+                return `New BigQuery releases: ${selectedItems.length} changes available. Details: ${baseUrl}${hashtagsStr}`;
+            }
+            return tweet;
+        }
     }
-    
-    const draftText = `${prefix}${descriptionText}${suffix}${hashtagsStr}`;
-    
-    const textarea = document.getElementById("tweet-textarea");
-    textarea.value = draftText;
-    
-    // Refresh composer stats
-    updateComposerStats();
 }
 
 // Close Twitter Composer
 function closeComposer() {
-    state.selectedItemId = null;
+    state.selectedItemIds.clear();
     const cards = document.querySelectorAll(".release-card");
     cards.forEach(c => c.classList.remove("selected"));
     
@@ -505,7 +673,6 @@ function toggleHashtag(pill) {
         state.activeHashtags.delete(hashtag);
         pill.classList.remove("active");
         
-        // Remove from textarea text
         const regex = new RegExp(`\\s*${hashtag}\\b`, 'g');
         text = text.replace(regex, '').trim();
     } else {
@@ -513,7 +680,6 @@ function toggleHashtag(pill) {
         state.activeHashtags.add(hashtag);
         pill.classList.add("active");
         
-        // Append to textarea text
         text = text + " " + hashtag;
     }
     
@@ -528,11 +694,9 @@ function updateComposerStats() {
     const count = text.length;
     const remaining = 280 - count;
     
-    // Update count label
     const label = document.getElementById("char-count-text");
     label.innerText = remaining;
     
-    // Update label color state
     label.className = "char-count";
     if (remaining <= 20 && remaining >= 0) {
         label.classList.add("warning");
@@ -540,26 +704,21 @@ function updateComposerStats() {
         label.classList.add("danger");
     }
 
-    // Update Progress Ring SVG
     const circle = document.getElementById("char-progress-circle");
-    
-    // Determine progress percentage (cap at 100%)
     const pct = Math.min(count / 280, 1);
     const offset = CIRCUMFERENCE - (pct * CIRCUMFERENCE);
     
     circle.style.strokeDasharray = `${CIRCUMFERENCE} ${CIRCUMFERENCE}`;
     circle.style.strokeDashoffset = offset;
     
-    // Progress bar colors
     if (remaining < 0) {
-        circle.style.stroke = "#ef4444"; // danger red
+        circle.style.stroke = "#ef4444";
     } else if (remaining <= 20) {
-        circle.style.stroke = "#f59e0b"; // warning amber
+        circle.style.stroke = "#f59e0b";
     } else {
-        circle.style.stroke = "#1d9bf0"; // standard twitter blue
+        circle.style.stroke = "#1d9bf0";
     }
     
-    // Disable share button if empty or over-limit
     const shareBtn = document.getElementById("btn-share-twitter");
     if (count === 0 || remaining < 0) {
         shareBtn.disabled = true;
@@ -571,19 +730,14 @@ function updateComposerStats() {
         shareBtn.style.cursor = "pointer";
     }
     
-    // Update live mockup preview
     const preview = document.getElementById("mock-tweet-text");
-    
-    // Format links in preview text to look blue
     let formattedText = escapeHtml(text);
     
-    // Basic URL regex replacement to anchor tags for preview visual
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     formattedText = formattedText.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
     
-    // Highlight hashtags in preview
     const tagRegex = /(#[a-zA-Z0-9_]+)/g;
     formattedText = formattedText.replace(tagRegex, (tag) => {
         return `<a href="https://twitter.com/hashtag/${tag.slice(1)}" target="_blank">${tag}</a>`;
@@ -617,20 +771,15 @@ function shareOnTwitter() {
 function exportToCSV() {
     if (state.filteredReleases.length === 0) return;
     
-    // Header row
     const headers = ["ID", "Date", "Updated Date", "Type", "Text Content"];
     
-    // Helper to format fields for CSV (escape double quotes, wrap in quotes)
     const formatCSVField = (text) => {
         if (text === null || text === undefined) return '""';
         let str = String(text);
-        // Double up quotes
         str = str.replace(/"/g, '""');
-        // Wrap in quotes
         return `"${str}"`;
     };
     
-    // Build rows
     const rows = [
         headers.join(",")
     ];
@@ -646,15 +795,12 @@ function exportToCSV() {
         rows.push(row.join(","));
     });
     
-    // Create Blob
-    const csvContent = "\uFEFF" + rows.join("\n"); // \uFEFF is UTF-8 BOM for Excel support
+    const csvContent = "\uFEFF" + rows.join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     
-    // Download Link
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     
-    // Timestamp for filename
     const dateStr = new Date().toISOString().slice(0, 10);
     link.setAttribute("href", url);
     link.setAttribute("download", `bigquery_release_notes_${dateStr}.csv`);
