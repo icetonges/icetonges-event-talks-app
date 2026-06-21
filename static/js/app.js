@@ -33,6 +33,10 @@ function initApp() {
     document.getElementById("btn-close-composer").addEventListener("click", closeComposer);
     document.getElementById("btn-share-twitter").addEventListener("click", shareOnTwitter);
     document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
+    document.getElementById("btn-theme-toggle").addEventListener("click", toggleTheme);
+    
+    // Apply saved theme
+    applySavedTheme();
     
     // Tweet textarea listener
     const textarea = document.getElementById("tweet-textarea");
@@ -660,4 +664,53 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+}
+
+// Apply saved theme preference on startup
+function applySavedTheme() {
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    const body = document.body;
+    const themeIcon = document.getElementById("theme-icon");
+    
+    if (savedTheme === "light") {
+        body.classList.remove("dark-theme");
+        body.classList.add("light-theme");
+        if (themeIcon) {
+            themeIcon.setAttribute("data-lucide", "moon");
+        }
+    } else {
+        body.classList.remove("light-theme");
+        body.classList.add("dark-theme");
+        if (themeIcon) {
+            themeIcon.setAttribute("data-lucide", "sun");
+        }
+    }
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+}
+
+// Toggle Theme between dark and light
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById("theme-icon");
+    
+    if (body.classList.contains("light-theme")) {
+        body.classList.remove("light-theme");
+        body.classList.add("dark-theme");
+        localStorage.setItem("theme", "dark");
+        if (themeIcon) {
+            themeIcon.setAttribute("data-lucide", "sun");
+        }
+    } else {
+        body.classList.remove("dark-theme");
+        body.classList.add("light-theme");
+        localStorage.setItem("theme", "light");
+        if (themeIcon) {
+            themeIcon.setAttribute("data-lucide", "moon");
+        }
+    }
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 }

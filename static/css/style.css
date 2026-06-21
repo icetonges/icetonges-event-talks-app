@@ -1284,3 +1284,123 @@ body {
         position: static;
     }
 }
+
+/* ==========================================================================
+   Light Theme Variable Overrides & Style Rules
+   ========================================================================== */
+body.light-theme {
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-card-hover: rgba(255, 255, 255, 0.95);
+    --bg-composer: #ffffff;
+    --bg-input: #f1f5f9;
+    --border-color: rgba(15, 23, 42, 0.08);
+    --border-color-hover: rgba(15, 23, 42, 0.16);
+    
+    --text-main: #0f172a;
+    --text-secondary: #475569;
+    --text-dimmed: #64748b;
+    
+    --accent-primary: #7c3aed;
+    --accent-secondary: #4f46e5;
+    --accent-glow: rgba(124, 58, 237, 0.12);
+    
+    --color-feature: #7c3aed;
+    --color-feature-bg: rgba(124, 58, 237, 0.08);
+    --color-announcement: #2563eb;
+    --color-announcement-bg: rgba(37, 99, 235, 0.08);
+    --color-breaking: #dc2626;
+    --color-breaking-bg: rgba(220, 38, 38, 0.08);
+    --color-changed: #d97706;
+    --color-changed-bg: rgba(217, 119, 6, 0.08);
+    --color-deprecated: #db2777;
+    --color-deprecated-bg: rgba(219, 39, 119, 0.08);
+    --color-fix: #059669;
+    --color-fix-bg: rgba(5, 150, 105, 0.08);
+    --color-issue: #e11d48;
+    --color-issue-bg: rgba(225, 29, 72, 0.08);
+    
+    --color-twitter-bg: rgba(29, 155, 240, 0.05);
+}
+
+/* Light Theme Scrollbars */
+body.light-theme ::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.15);
+}
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 23, 42, 0.25);
+}
+
+/* Light Theme Header & Sidebar Overrides */
+body.light-theme .app-header {
+    background: rgba(248, 250, 252, 0.85);
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+body.light-theme .app-sidebar {
+    background: rgba(241, 245, 249, 0.4);
+}
+
+/* Light Theme Cards Code blocks */
+body.light-theme .release-card-body code {
+    background: #e2e8f0;
+    color: #be123c;
+    border-color: rgba(15, 23, 42, 0.05);
+}
+
+/* Light Theme Composer Details */
+body.light-theme .selected-update-ref {
+    background: rgba(15, 23, 42, 0.02);
+}
+body.light-theme .hashtag-pill {
+    background: rgba(29, 155, 240, 0.05);
+}
+body.light-theme .hashtag-pill.active {
+    background: var(--color-twitter);
+    color: #ffffff;
+}
+
+/* Light Theme Mock Twitter Card */
+body.light-theme .mock-tweet-card {
+    background-color: #ffffff;
+    border-color: #eff3f4;
+}
+body.light-theme .user-name {
+    color: #0f1419;
+}
+body.light-theme .tweet-body-text {
+    color: #0f1419;
+}
+body.light-theme .tweet-card-attachment {
+    border-color: #eff3f4;
+}
+body.light-theme .attachment-title {
+    color: #0f1419;
+}
+body.light-theme .attachment-domain, 
+body.light-theme .attachment-desc, 
+body.light-theme .user-handle, 
+body.light-theme .bullet, 
+body.light-theme .tweet-time {
+    color: #536471;
+}
+body.light-theme .tweet-actions {
+    color: #536471;
+}
+body.light-theme .avatar-fallback {
+    background: #e2e8f0;
+    border-color: var(--accent-primary);
+    color: #0f172a;
+}
+
+/* Skeleton loader light colors */
+body.light-theme .skeleton-card {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+body.light-theme .skeleton-badge,
+body.light-theme .skeleton-date {
+    background: rgba(0, 0, 0, 0.04);
+}
+body.light-theme .skeleton-line {
+    background: rgba(0, 0, 0, 0.03);
+}
