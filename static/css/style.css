@@ -305,20 +305,20 @@ body {
 
 /* Stats dashboard */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .stat-card {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 0.75rem;
+    padding: 0.6rem 1rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
+    justify-content: space-between;
     align-items: center;
-    text-align: center;
     cursor: pointer;
     transition: var(--transition-quick);
 }
@@ -335,14 +335,14 @@ body {
 
 .stat-num {
     font-family: var(--font-heading);
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 700;
 }
 
 .stat-lbl {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
-    margin-top: 0.2rem;
+    font-weight: 500;
 }
 
 .stat-card[data-stat-type="total"] .stat-num { color: #f8fafc; }
