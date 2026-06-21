@@ -1,0 +1,330 @@
+{
+  "reportTitle": "Independent Auditor's Reports on the DoD FY 2025 Financial Statements",
+  "reportNumber": "DODIG-2026-032",
+  "publishDate": "December 18, 2025",
+  "opinion": "Disclaimer of Opinion",
+  "generalManager": "Steven A. Stebbins (Acting)",
+  "assistantInspectorGeneral": "Lorin T. Venable, CPA",
+  "overallStats": {
+    "disclaimerAssetsPercentage": 43,
+    "disclaimerBudgetaryPercentage": 64,
+    "materialWeaknessesCount": 26,
+    "significantDeficienciesCount": 2,
+    "noncomplianceCount": 5
+  },
+  "materialMisstatements": [
+    {
+      "id": "bpc",
+      "title": "Building Partner Capacity (BPC) Programs",
+      "amount": "$18.9 Billion",
+      "impact": "High",
+      "description": "DoD recorded funding as spent immediately when transferred to a trust fund account instead of when goods or services were actually purchased for the partner nation. This resulted in an $18.9B material misstatement reported under the DoD-Wide Oversight and Monitoring material weakness."
+    },
+    {
+      "id": "jsf",
+      "title": "Joint Strike Fighter (JSF) Global Spares Pool",
+      "amount": "Unquantified (Material)",
+      "impact": "Critical",
+      "description": "DoD failed to account for or report Global Spares Pool assets for the F-35 program, in violation of OMB Circular A-136 and SFFAS 3 and 6. Because DoD cannot verify the existence, completeness, or value of these spares, the misstatement amount is unquantifiable."
+    },
+    {
+      "id": "adjustments",
+      "title": "Unsupported Journal Adjustments",
+      "amount": "$859 Billion",
+      "impact": "Severe",
+      "description": "DoD Components recorded more than 5,665 unsupported journal adjustments totaling over $859 billion in the last two quarters of FY 2025 alone. These entries lacked sufficient supporting documentation, creating a massive audit trail break."
+    },
+    {
+      "id": "reconciliation",
+      "title": "Net Cost to Net Outlays Discrepancy",
+      "amount": "$1.3 Billion",
+      "impact": "Medium",
+      "description": "An unreconcilable difference of $1.3 billion was reported in Note 24 between the budgetary and proprietary accounts, due to inadequate component-level variance reconciliation."
+    }
+  ],
+  "materialWeaknesses": [
+    {
+      "id": 1,
+      "category": "IT & Systems",
+      "title": "Financial Management Systems Modernization",
+      "description": "Hundreds of systems relevant to financial reporting do not comply with the Federal Financial Management Improvement Act (FFMIA) of 1996. Key general ledger systems are not scheduled to retire until FY 2031, conflicting with the DoD's FY 2028 compliance target.",
+      "recommendations": [
+        "Develop a comprehensive plan with milestones for each system to become FFMIA compliant or retire.",
+        "Expedite retirement of legacy systems and update the legacy system definition."
+      ]
+    },
+    {
+      "id": 2,
+      "category": "IT & Systems",
+      "title": "Configuration Management",
+      "description": "Configuration management controls over financial management systems at the Component level did not comply with NIST SP 800-53 standards.",
+      "recommendations": [
+        "Develop and implement comprehensive configuration management plans.",
+        "Retain records and monitor all configuration-controlled changes."
+      ]
+    },
+    {
+      "id": 3,
+      "category": "IT & Systems",
+      "title": "Security Management",
+      "description": "DoD components did not comply with NIST SP 800-53 security management controls, lacking periodically reviewed policies and Action Plan milestones for known vulnerabilities.",
+      "recommendations": [
+        "Develop policies and procedures at the system level.",
+        "Resolve previously identified component-level security deficiencies."
+      ]
+    },
+    {
+      "id": 4,
+      "category": "IT & Systems",
+      "title": "Access Controls",
+      "description": "Access controls did not comply with NIST SP 800-53. Failed to consistently review user access, maintain security event logs, or off-board terminated employees in a timely manner.",
+      "recommendations": [
+        "Enforce access controls regarding user statuses and privileged user functions.",
+        "Implement a uniform, reliable off-boarding process like Identity, Credential, and Access Management (ICAM)."
+      ]
+    },
+    {
+      "id": 5,
+      "category": "IT & Systems",
+      "title": "Segregation of Duties",
+      "description": "DoD Components lacked organizational-level Segregation of Duties (SoD) policies, did not align system access to segregated duties, and failed to adhere to the least privilege principle.",
+      "recommendations": [
+        "Enforce SoD controls to define and segregate incompatible duties.",
+        "Review accounts regularly for compliance with least privilege."
+      ]
+    },
+    {
+      "id": 6,
+      "category": "IT & Systems",
+      "title": "Interface Controls",
+      "description": "Information exchange controls did not comply with NIST SP 800-53. Lacked minimum documentation for exchanges, complete population tracking for edits, and error validation.",
+      "recommendations": [
+        "Develop documentation capturing security and privacy requirements for interfaces.",
+        "Establish an aggressive plan to systematically reduce the total number of system interfaces."
+      ]
+    },
+    {
+      "id": 7,
+      "category": "Accounting & Transaction Support",
+      "title": "Universe of Transactions (UoT)",
+      "description": "DoD did not provide transaction-level populations to support financial statement adjustments or material line items. Reconciliations were performed at summary levels rather than transaction levels.",
+      "recommendations": [
+        "Establish a DoD-wide plan to ensure the availability of a complete UoT.",
+        "Coordinate to enhance controls in general ledger systems for transaction-level data."
+      ]
+    },
+    {
+      "id": 8,
+      "category": "Asset & Liability Valuation",
+      "title": "Fund Balance with Treasury (FBWT)",
+      "description": "DoD could not support FBWT beginning balances or adjustments for Treasury Index 97 (TI-97), which represents 22% ($223.8B) of the DoD's total $1.0T FBWT balance.",
+      "recommendations": [
+        "Reconcile historical TI-97 FBWT balances in accordance with DoD Financial Management Regulation (FMR).",
+        "Maintain appropriate documentation supporting accounting adjustments."
+      ]
+    },
+    {
+      "id": 9,
+      "category": "Asset & Liability Valuation",
+      "title": "Inventory and Stockpile Materials",
+      "description": "Inventory balances ($155.4B) were not valued in accordance with SFFAS 3 or SFFAS 48. Components failed to substantiate the existence, completeness, and valuation of inventory.",
+      "recommendations": [
+        "Implement DoD-wide policies for reporting inventory value.",
+        "Monitor inventory counts and maintain supporting documentation."
+      ]
+    },
+    {
+      "id": 10,
+      "category": "Asset & Liability Valuation",
+      "title": "Operating Materials and Supplies (OM&S)",
+      "description": "OM&S balances ($231B) were not properly valued. Excess, obsolete, and unserviceable (EOU) materials were not valued at net realizable value, and accountable property systems of record failed to support valid valuations.",
+      "recommendations": [
+        "Comply with SFFAS 3 and 48 for opening balances.",
+        "Ensure accountable systems of record support valid OM&S valuations.",
+        "Implement policies for accurate EOU identification and net realizable value write-downs."
+      ]
+    },
+    {
+      "id": 11,
+      "category": "Asset & Liability Valuation",
+      "title": "General Property, Plant, and Equipment (PP&E)",
+      "description": "DoD reported PP&E of $501.2B (General Equipment and Internal Use Software) but lacked documentation supporting valuation, existence, and completeness.",
+      "recommendations": [
+        "Implement a process to consistently maintain supporting documentation.",
+        "Disclose unreserved assertions for opening balances under SFFAS 50."
+      ]
+    },
+    {
+      "id": 12,
+      "category": "Asset & Liability Valuation",
+      "title": "Real Property",
+      "description": "Real Property ($478.7B) lacked a complete UoT and supporting documentation for balances, existence, and completeness.",
+      "recommendations": [
+        "Establish internal controls, policies, and procedures to reconcile accountable property records to financial statements."
+      ]
+    },
+    {
+      "id": 13,
+      "category": "Asset & Liability Valuation",
+      "title": "Government Property in the Possession of Contractors",
+      "description": "DoD failed to reconcile contractor-held property balances to systems of record. Exceeded reliance on contractor self-reporting without effective oversight.",
+      "recommendations": [
+        "Implement DoD-wide policies to account for contractor-held property under SFFAS 3, 6, 48, and 50.",
+        "Develop standard inventory management metrics across all contracts."
+      ]
+    },
+    {
+      "id": 14,
+      "category": "Asset & Liability Valuation",
+      "title": "Joint Strike Fighter Program",
+      "description": "F-35 program spares (Global Spares Pool) were omitted from the financial statements. DoD lacked contracting mechanisms to request the financial data needed for valuation.",
+      "recommendations": [
+        "Implement DoD-wide controls to record, report, and value all JSF Program assets."
+      ]
+    },
+    {
+      "id": 15,
+      "category": "Asset & Liability Valuation",
+      "title": "Accounts Payable",
+      "description": "DoD reported Accounts Payable of $49.8B but lacked documentation supporting balances, and failed to record expenses in the correct period.",
+      "recommendations": [
+        "Establish a DoD-wide action plan to ensure Accounts Payable are recorded in the proper period."
+      ]
+    },
+    {
+      "id": 16,
+      "category": "Asset & Liability Valuation",
+      "title": "Environmental and Disposal Liabilities (E&DL)",
+      "description": "E&DL ($108B) did not include all cleanup, closure, or disposal costs. Lacked methodologies to estimate future disposal costs or support complete assessments.",
+      "recommendations": [
+        "Implement controls to ensure a complete population of cleanup and disposal costs is used for calculations."
+      ]
+    },
+    {
+      "id": 17,
+      "category": "Asset & Liability Valuation",
+      "title": "Leases",
+      "description": "Did not fully comply with the new lease standard SFFAS 54. 8 of 16 significant Components failed to identify leases or recognize lease activity.",
+      "recommendations": [
+        "Establish and monitor a process to oversee Component-level implementation of SFFAS 54."
+      ]
+    },
+    {
+      "id": 18,
+      "category": "Accounting & Transaction Support",
+      "title": "Unsupported Accounting Adjustments",
+      "description": "DoD recorded over $859 billion in unsupported accounting adjustments during Q3 and Q4 of FY 2025 alone due to poor general ledger reconciliations.",
+      "recommendations": [
+        "Research and correct underlying root causes prompting manual unsupported adjustments.",
+        "Establish controls ensuring manual and system adjustments contain sufficient audit trails."
+      ]
+    },
+    {
+      "id": 19,
+      "category": "Accounting & Transaction Support",
+      "title": "Intragovernmental Transactions and Eliminations",
+      "description": "Lacked documentation when recording journal voucher adjustments to reconcile trading partner records. Delays in G-Invoicing deployment.",
+      "recommendations": [
+        "Monitor G-Invoicing implementation to obtain transaction-level trading partner support."
+      ]
+    },
+    {
+      "id": 20,
+      "category": "Accounting & Transaction Support",
+      "title": "Gross Costs",
+      "description": "Gross Costs ($1.5T) were not reported in compliance with SFFAS 4. Lacked controls to reconcile subledgers or record transactions in the correct period.",
+      "recommendations": [
+        "Develop a DoD-wide action plan to ensure Components implement internal controls for gross costs."
+      ]
+    },
+    {
+      "id": 21,
+      "category": "Accounting & Transaction Support",
+      "title": "Earned Revenue",
+      "description": "Earned Revenue ($569.6B) transactions were recorded inaccurately and lacked proper internal controls and risk assessments.",
+      "recommendations": [
+        "Perform a risk assessment on revenue processes and establish controls for timely transaction recording."
+      ]
+    },
+    {
+      "id": 22,
+      "category": "Accounting & Transaction Support",
+      "title": "Reconciliation of Net Cost of Operations to Outlays",
+      "description": "Note 24 reconciliation reported a $1.3 billion unreconcilable difference due to inadequate component-level variance research.",
+      "recommendations": [
+        "Implement DoD-wide procedures to ensure Note 24 reconciliations are complete and consistent."
+      ]
+    },
+    {
+      "id": 23,
+      "category": "Accounting & Transaction Support",
+      "title": "Budgetary Resources",
+      "description": "Failed to prepare a complete and accurate Statement of Budgetary Resources (SBR) and did not resolve variances on SF 132/SF 133 reconciliations, creating Antideficiency Act risks.",
+      "recommendations": [
+        "Design procedures to address root causes of budgetary variances."
+      ]
+    },
+    {
+      "id": 24,
+      "category": "Oversight & Monitoring",
+      "title": "Service Organizations",
+      "description": "Failed to monitor service organizations (like DFAS) and complementary user entity controls (CUECs). Auditors issued qualified/adverse opinions on 10 of 28 SOC assessments.",
+      "recommendations": [
+        "Develop processes to evaluate SOC reports and document CUECs at the Component level."
+      ]
+    },
+    {
+      "id": 25,
+      "category": "Oversight & Monitoring",
+      "title": "Component Entity-Level Controls",
+      "description": "DoD Components lacked effective entity-level internal control activities and monitoring, raising misstatement risks.",
+      "recommendations": [
+        "Coordinate to design control activities preventing material misstatement."
+      ]
+    },
+    {
+      "id": 26,
+      "category": "Oversight & Monitoring",
+      "title": "DoD-Wide Oversight and Monitoring",
+      "description": "Office of the CFO lacked oversight. Component data in consolidation systems did not match component-level audited financial statements. Recorded $18.9B in BPC funds as spent when they were still available.",
+      "recommendations": [
+        "Enforce FMR guidelines for Defense Departmental Reporting System data alignment.",
+        "Ensure Agency-Wide statements are finalized after all component opinions are issued (beginning in FY 2028)."
+      ]
+    }
+  ],
+  "significantDeficiencies": [
+    {
+      "id": "sd1",
+      "title": "Risk Management Framework (RMF)",
+      "description": "Failed to fully implement RMF for financial management systems, including control assessments, system-level risk assessments, and continuous monitoring."
+    },
+    {
+      "id": "sd2",
+      "title": "Accounts Receivable (Non-Federal)",
+      "description": "Non-Federal accounts receivable ($15.6B) lacked a subsidiary ledger at the invoice level that reconciles to the general ledger, and collections were not liquidated in prior periods."
+    }
+  ],
+  "roadmap2028": [
+    {
+      "phase": "Phase 1: Foundation (FY 2026 - 2027)",
+      "title": "Defense Working Capital Fund (DWCF) Focus",
+      "milestone": "Prepare combined DWCF Financial Report culminating in an unmodified (clean) opinion on FY 2027 statements. This acts as the critical building block."
+    },
+    {
+      "phase": "Phase 2: Transition (FY 2027 - 2028)",
+      "title": "Enforce FFMIA Compliant Systems",
+      "milestone": "Expedite retirement of legacy accounting systems. Align modernization dates from 2031 to 2028. Implement Transaction-Level Universe of Transactions (UoT)."
+    },
+    {
+      "phase": "Phase 3: Achievement (FY 2028)",
+      "title": "Agency-Wide Clean Opinion",
+      "milestone": "Finalize agency-wide financial reports only AFTER all component audit opinions are in. Achieve full FMFIA/FFMIA compliance and an unmodified (clean) audit opinion."
+    },
+    {
+      "phase": "Continuous Catalyst",
+      "title": "Automation & Artificial Intelligence",
+      "milestone": "Deploy advanced automation and AI engines to automate internal controls, monitor system anomalies, conduct real-time reconciliations, and eradicate manual data-entry errors."
+    }
+  ]
+}

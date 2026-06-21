@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoD FY 2025 Audit Explorer</title>
+    <meta name="description" content="An interactive, high-fidelity exploration dashboard for the U.S. Department of Defense FY 2025 Financial Statement Audit report.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Original styles and custom DoD dashboard styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dod_style.css') }}">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo-container">
+                <div class="logo-glow-dod"></div>
+                <div class="logo-icon-dod">
+                    <i data-lucide="shield-check" class="icon-shield"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>DoD Audit <span>Explorer</span></h1>
+                    <p class="subtitle">Interactive Analysis of the FY 2025 Financial Statements (DODIG-2026-032)</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary" title="Return to BigQuery Release Notes">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                    <span>BigQuery Notes</span>
+                </a>
+                <div class="clean-gauge-container">
+                    <span class="gauge-label">Clean Opinion Progress</span>
+                    <div class="gauge-bar-wrapper">
+                        <div class="gauge-bar" id="gauge-bar-progress" style="width: 0%;"></div>
+                    </div>
+                    <span class="gauge-value" id="gauge-value-text">0%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-content dod-grid-layout">
+            <!-- Sidebar: Stats and Game Controls -->
+            <aside class="app-sidebar dod-sidebar" aria-label="DoD Audit Controls">
+                <!-- Status widget -->
+                <div class="sidebar-widget status-widget-dod">
+                    <div class="opinion-tag disclaimer">Disclaimer of Opinion</div>
+                    <div class="audit-period">FY 2025 Financial Year</div>
+                    <div class="audit-auditor">Auditor: DoD Office of Inspector General</div>
+                </div>
+
+                <!-- Simulation Progress / Game Widget -->
+                <div class="sidebar-widget simulation-widget">
+                    <h3>Remediation Simulator</h3>
+                    <p class="sim-intro">Remediate the 26 material weaknesses to help the DoD achieve a clean audit opinion by 2028!</p>
+                    
+                    <div class="sim-score-card">
+                        <div class="sim-stat">
+                            <span class="sim-num" id="sim-solved">0</span>
+                            <span class="sim-total">/ 26 Solved</span>
+                        </div>
+                        <div class="sim-opinion-prediction">
+                            <span class="predict-label">Projected 2028 Opinion:</span>
+                            <span class="predict-val" id="predicted-opinion">Disclaimer</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sim-actions">
+                        <button id="btn-auto-remediate" class="btn btn-primary btn-spark">
+                            <i data-lucide="sparkles"></i>
+                            <span>AI Remediation Blast</span>
+                        </button>
+                        <button id="btn-reset-simulation" class="text-btn" style="margin-top: 0.5rem; display: block; margin-left: auto; margin-right: auto;">Reset Audit</button>
+                    </div>
+                </div>
+
+                <!-- Materiality Stat Dashboard -->
+                <div class="sidebar-widget materiality-widget">
+                    <h3>Key Audit Materiality Areas</h3>
+                    <div class="materiality-list">
+                        <div class="materiality-item" data-amount="1000">
+                            <span class="materiality-name">Fund Balance with Treasury</span>
+                            <span class="materiality-value">$1.0 Trillion</span>
+                        </div>
+                        <div class="materiality-item" data-amount="501">
+                            <span class="materiality-name">General PP&E</span>
+                            <span class="materiality-value">$501.2 Billion</span>
+                        </div>
+                        <div class="materiality-item" data-amount="478">
+                            <span class="materiality-name">Real Property</span>
+                            <span class="materiality-value">$478.7 Billion</span>
+                        </div>
+                        <div class="materiality-item" data-amount="231">
+                            <span class="materiality-name">Operating Materials & Supplies</span>
+                            <span class="materiality-value">$231.0 Billion</span>
+                        </div>
+                        <div class="materiality-item" data-amount="155">
+                            <span class="materiality-name">Inventory</span>
+                            <span class="materiality-value">$155.4 Billion</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <section class="feed-section dod-main-feed" aria-label="Audit Explorer Main Panel">
+                
+                <!-- Quick Navigation Tabs -->
+                <div class="dod-navigation-tabs">
+                    <button class="nav-tab active" data-target="weaknesses">Material Weaknesses (26)</button>
+                    <button class="nav-tab" data-target="misstatements">Material Misstatements</button>
+                    <button class="nav-tab" data-target="roadmap">2028 Clean Roadmap</button>
+                </div>
+
+                <!-- TAB 1: Material Weaknesses Panel -->
+                <div class="tab-panel active" id="panel-weaknesses">
+                    <!-- Filters and Search -->
+                    <div class="feed-header">
+                        <h2>Material Weaknesses <span class="count-badge" id="weakness-count">26</span></h2>
+                        <div class="search-input-wrapper dod-search">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="weakness-search" placeholder="Filter weaknesses..." aria-label="Search weaknesses">
+                        </div>
+                    </div>
+
+                    <!-- Category Pills -->
+                    <div class="filter-pills-container" style="margin-bottom: 1.5rem;">
+                        <button class="filter-pill active" data-category="All">All Categories</button>
+                        <button class="filter-pill" data-category="IT & Systems">IT & Systems</button>
+                        <button class="filter-pill" data-category="Asset & Liability Valuation">Asset Valuation</button>
+                        <button class="filter-pill" data-category="Accounting & Transaction Support">Accounting & Transactions</button>
+                        <button class="filter-pill" data-category="Oversight & Monitoring">Oversight & Monitoring</button>
+                    </div>
+
+                    <!-- Grid of Weaknesses -->
+                    <div class="weakness-grid" id="weaknesses-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- TAB 2: Material Misstatements Panel -->
+                <div class="tab-panel" id="panel-misstatements">
+                    <div class="feed-header">
+                        <h2>Key Material Misstatements</h2>
+                        <p class="panel-subtitle">Key anomalies flagged by the auditors that distorted the DoD's statements</p>
+                    </div>
+
+                    <div class="misstatements-container" id="misstatements-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: 2028 Roadmap Panel -->
+                <div class="tab-panel" id="panel-roadmap">
+                    <div class="feed-header">
+                        <h2>Roadmap to a Clean Audit by 2028</h2>
+                        <p class="panel-subtitle">The Under Secretary of Defense (Comptroller) strategic milestones and AI plans</p>
+                    </div>
+
+                    <div class="roadmap-timeline" id="roadmap-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Weakness Details Drawer / Panel (Innovative UX) -->
+            <section class="composer-section dod-details-drawer" id="details-drawer" aria-label="Weakness detail view">
+                <div class="composer-header">
+                    <div class="composer-title-wrapper">
+                        <i data-lucide="file-text" class="icon-tw-composer"></i>
+                        <h3 id="drawer-title-label">Weakness Details</h3>
+                    </div>
+                    <button id="btn-close-drawer" class="close-btn" title="Close Details">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <!-- Drawer Empty State -->
+                <div id="drawer-empty-state" class="composer-empty">
+                    <div class="composer-empty-glow" style="background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(9, 13, 22, 0) 70%);"></div>
+                    <i data-lucide="info" class="composer-empty-icon" style="color: var(--accent-secondary);"></i>
+                    <h4>Select a Weakness</h4>
+                    <p>Click on any material weakness card in the grid to inspect details, OIG recommendations, and simulate an AI remedy.</p>
+                </div>
+
+                <!-- Drawer Active State -->
+                <div id="drawer-active-state" class="drawer-content-active" style="display: none;">
+                    <div class="drawer-header-meta">
+                        <span id="drawer-category-badge" class="type-badge badge-feature">IT & Systems</span>
+                        <span class="ref-date">ID: #<span id="drawer-id">1</span></span>
+                    </div>
+
+                    <h2 class="drawer-weakness-title" id="drawer-title">Financial Management Systems Modernization</h2>
+                    
+                    <div class="drawer-section">
+                        <h4>Deficiency Analysis</h4>
+                        <p id="drawer-description">Analysis text goes here.</p>
+                    </div>
+
+                    <div class="drawer-section">
+                        <h4>Auditor Recommendations</h4>
+                        <ul id="drawer-recommendations-list" class="recs-list">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+
+                    <!-- Remediation Simulator Control inside Drawer -->
+                    <div class="drawer-remediate-box">
+                        <div class="remediate-box-glow"></div>
+                        <div class="remediate-status-row">
+                            <span class="status-lbl">Remediation Status:</span>
+                            <span class="status-val status-badge disclaimer" id="drawer-remedy-status">Unsolved</span>
+                        </div>
+                        <div class="remediate-ai-impact" id="drawer-remedy-impact-row" style="display: none;">
+                            <strong>AI Solution Applied:</strong>
+                            <p id="drawer-remedy-impact-desc">AI Automated processes deployed.</p>
+                        </div>
+                        <button id="btn-remediate-individual" class="btn btn-primary btn-remediate-action">
+                            <i data-lucide="zap"></i>
+                            <span>Simulate AI Remedy</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripting for interactivity -->
+    <script src="{{ url_for('static', filename='js/dod_audit.js') }}"></script>
+</body>
+</html>

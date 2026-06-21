@@ -106,9 +106,31 @@ def fetch_and_parse_feed():
             
     return parsed_items
 
+import json
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/dod-audit')
+def dod_audit():
+    return render_template('dod_audit.html')
+
+@app.route('/api/dod-audit')
+def get_dod_audit():
+    try:
+        file_path = os.path.join(app.root_path, 'dod_audit_summary.json')
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return jsonify({
+            "status": "success",
+            "data": data
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
 
 @app.route('/api/releases')
 def get_releases():
