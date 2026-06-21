@@ -32,6 +32,7 @@ function initApp() {
     document.getElementById("sort-select").addEventListener("change", handleSortChange);
     document.getElementById("btn-close-composer").addEventListener("click", closeComposer);
     document.getElementById("btn-share-twitter").addEventListener("click", shareOnTwitter);
+    document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
     
     // Tweet textarea listener
     const textarea = document.getElementById("tweet-textarea");
@@ -298,6 +299,10 @@ function renderFeed() {
                 ${item.html}
             </div>
             <div class="release-card-footer">
+                <button class="btn-card-copy" title="Copy text to clipboard">
+                    <i data-lucide="copy"></i>
+                    <span>Copy</span>
+                </button>
                 <button class="btn-card-tweet" title="Compose Tweet about this update">
                     <i data-lucide="twitter"></i>
                     <span>Compose Tweet</span>
@@ -307,12 +312,43 @@ function renderFeed() {
 
         // Card clicks
         card.addEventListener("click", (e) => {
-            // Check if user clicked a link
-            if (e.target.tagName.toLowerCase() === 'a' || e.target.closest('a')) {
-                return; // Let links open normally
+            // Check if user clicked a link or button
+            if (e.target.tagName.toLowerCase() === 'a' || e.target.closest('a') || e.target.closest('button')) {
+                return; // Let links and buttons handle their own clicks
             }
             
             handleSelectCard(item);
+        });
+
+        // Copy button click
+        const copyBtn = card.querySelector(".btn-card-copy");
+        copyBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            try {
+                await navigator.clipboard.writeText(item.text);
+                
+                // Show temporary success feedback
+                const btnText = copyBtn.querySelector("span");
+                const btnIcon = copyBtn.querySelector("i");
+                const oldText = btnText.innerText;
+                
+                btnText.innerText = "Copied!";
+                copyBtn.style.borderColor = "var(--color-fix)";
+                copyBtn.style.color = "var(--color-fix)";
+                
+                btnIcon.setAttribute("data-lucide", "check");
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    btnText.innerText = oldText;
+                    copyBtn.style.borderColor = "";
+                    copyBtn.style.color = "";
+                    btnIcon.setAttribute("data-lucide", "copy");
+                    lucide.createIcons();
+                }, 1500);
+            } catch (err) {
+                console.error("Clipboard Error:", err);
+            }
         });
 
         // Tweet button click
@@ -571,4 +607,57 @@ function shareOnTwitter() {
     
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(twitterUrl, "_blank", "width=600,height=400,resizable=yes");
+}
+
+// Export current filtered releases to a CSV file
+function exportToCSV() {
+    if (state.filteredReleases.length === 0) return;
+    
+    // Header row
+    const headers = ["ID", "Date", "Updated Date", "Type", "Text Content"];
+    
+    // Helper to format fields for CSV (escape double quotes, wrap in quotes)
+    const formatCSVField = (text) => {
+        if (text === null || text === undefined) return '""';
+        let str = String(text);
+        // Double up quotes
+        str = str.replace(/"/g, '""');
+        // Wrap in quotes
+        return `"${str}"`;
+    };
+    
+    // Build rows
+    const rows = [
+        headers.join(",")
+    ];
+    
+    state.filteredReleases.forEach(item => {
+        const row = [
+            formatCSVField(item.id),
+            formatCSVField(item.date),
+            formatCSVField(item.updated),
+            formatCSVField(item.type),
+            formatCSVField(item.text)
+        ];
+        rows.push(row.join(","));
+    });
+    
+    // Create Blob
+    const csvContent = "\uFEFF" + rows.join("\n"); // \uFEFF is UTF-8 BOM for Excel support
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    
+    // Download Link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    // Timestamp for filename
+    const dateStr = new Date().toISOString().slice(0, 10);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bigquery_release_notes_${dateStr}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }

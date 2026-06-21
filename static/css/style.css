@@ -664,12 +664,13 @@ body {
 .release-card-footer {
     display: flex;
     justify-content: flex-end;
+    gap: 0.75rem;
     margin-top: 1rem;
     padding-top: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.btn-card-tweet {
+.btn-card-copy, .btn-card-tweet {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
@@ -687,6 +688,12 @@ body {
     background: var(--color-twitter-bg);
     border-color: var(--color-twitter);
     color: var(--color-twitter);
+}
+
+.btn-card-copy:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-secondary);
+    color: var(--text-main);
 }
 
 /* Buttons */
